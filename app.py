@@ -1,6 +1,6 @@
 import json
 from flask import Flask, request, jsonify
-import db, cwa
+import modules.db as db, modules.cwa as cwa
 
 app = Flask(__name__)
 
