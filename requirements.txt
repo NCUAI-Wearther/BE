@@ -6,3 +6,4 @@ pydantic[email]>=2.0
 bcrypt>=4.1.2
 mysqlclient>=2.2.5
 gunicorn
+mysql-connector-python
