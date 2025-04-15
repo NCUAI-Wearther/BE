@@ -73,7 +73,3 @@ async def get_outfits():
 @app.get("/health", response_model=model.MessageResponse)
 async def health_check():
     return {"message": "健康狀態良好", "service": "wearther-api"}
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
