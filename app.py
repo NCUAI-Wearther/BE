@@ -47,10 +47,30 @@ async def get_forecast(request: model.LocationRequest):
 @app.post("/getWeather", response_model=model.WeatherResponse)
 async def get_weather(request: model.LocationRequest):
     result = cwa.queryWeatherByLocation(request.longitude, request.latitude)
-    if result.status_code != 200:
-        print(f"請求失敗，狀態碼: {result.status_code}, 錯誤訊息: {result.text}")
-        raise HTTPException(status_code=result.status_code, detail=result.text)
-    return {"message": "成功取得天氣資料", "data": result.json()}
+    try:
+        if result.status_code != 200:
+            print(f"請求失敗，狀態碼: {result.status_code}, 錯誤訊息: {result.text}")
+            raise HTTPException(status_code=result.status_code, detail=result.text)
+        else:
+            result = result.json()
+            data = result["data"]["aqi"][0]
+           
+            response = dict()
+            response['sitename'] = data["sitename"]
+            response['county'] = data["county"]
+            station = data["station"]
+            response['station'] = station["locationName"]
+            response['status'] = data["status"]
+            response['wind_speed'] = data["wind_speed"]
+            weatherElement = station["weatherElement"]
+            response['TEMP'] = weatherElement[3]["elementValue"]
+            response['HUMD'] = weatherElement[4]["elementValue"]
+            response['Weather'] = weatherElement[7]["elementValue"]
+
+            return {"message": "成功取得天氣資料", "data": response}
+    except Exception as e:
+            print("解析資料失敗:", e)
+            raise HTTPException(status_code=500, detail="解析天氣資料失敗")
 # endregion
 
 # region OUTFITS
