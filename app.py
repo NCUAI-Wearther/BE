@@ -1,95 +1,29 @@
-from fastapi import FastAPI, HTTPException, Depends, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from typing import List
+from flask import Flask
+from flask_cors import CORS
+from config import Config
+from flask_sqlalchemy import SQLAlchemy
+from models import db
 
-import modules.db as db
-import modules.cwa as cwa
-import modules.model as model
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(config_class)
 
-app = FastAPI(title="Wearther API", description="天氣穿著推薦API")
+    db.init_app(app)
+    CORS(app, resources={r"/api/*": {"origins": "*", "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"], "allow_headers": ["Content-Type", "Authorization"]}}, supports_credentials=True)
 
-# 啟用CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+    with app.app_context():
+        db.create_all()
 
-# region 使用者
-@app.post("/login", response_model=model.UserResponse)
-async def login(request: model.UserLogin):
-    response = db.login(request.email, request.password)
-    print("response", response)
-    if not response:
-        raise HTTPException(status_code=401, detail="登入失敗")
-    return response
-
-@app.post("/register", response_model=model.MessageResponse)
-async def register(request: model.UserCreate):
-    success, status = db.register(request.username, request.email, request.password, request.profile_pic_url)
-    if not success or status >= 400:
-        raise HTTPException(status_code=400, detail=success)
-    return {"message": "註冊成功"}
-# endregion
-
-# region 天氣API
-@app.post("/getForecast", response_model=model.ForecastResponse)
-async def get_forecast(request: model.LocationRequest):
-    result = cwa.queryForecastByLocation(request.longitude, request.latitude)
-    if result.status_code != 200:
-        print(f"請求失敗，狀態碼: {result.status_code}, 錯誤訊息: {result.text}")
-        raise HTTPException(status_code=result.status_code, detail=result.text)
-    return {"message": "成功取得預報資料", "data": result.json()}
-
-@app.post("/getWeather", response_model=model.WeatherResponse)
-async def get_weather(request: model.LocationRequest):
-    result = cwa.queryWeatherByLocation(request.longitude, request.latitude)
-    try:
-        if result.status_code != 200:
-            print(f"請求失敗，狀態碼: {result.status_code}, 錯誤訊息: {result.text}")
-            raise HTTPException(status_code=result.status_code, detail=result.text)
-        else:
-            result = result.json()
-            data = result["data"]["aqi"][0]
-           
-            response = dict()
-            response['sitename'] = data["sitename"]
-            response['county'] = data["county"]
-            station = data["station"]
-            response['station'] = station["locationName"]
-            response['status'] = data["status"]
-            response['wind_speed'] = data["wind_speed"]
-            weatherElement = station["weatherElement"]
-            response['TEMP'] = weatherElement[3]["elementValue"]
-            response['HUMD'] = weatherElement[4]["elementValue"]
-            response['Weather'] = weatherElement[7]["elementValue"]
-
-            return {"message": "成功取得天氣資料", "data": response}
-    except Exception as e:
-            print("解析資料失敗:", e)
-            raise HTTPException(status_code=500, detail="解析天氣資料失敗")
-# endregion
-
-# region OUTFITS
-@app.post("/outfits", response_model=model.OutfitResponse)
-async def create_outfit(outfit: model.OutfitCreate):
-    created_outfit = db.create_outfit(outfit.outfits)
-    if not created_outfit:
-        raise HTTPException(status_code=500, detail="創建穿著失敗")
-    return created_outfit
-
-@app.get("/outfits", response_model=List[model.OutfitResponse])
-async def get_outfits():
-    outfits = db.get_outfits()
-    if outfits is None:
-        raise HTTPException(status_code=500, detail="獲取穿著列表失敗")
-    return outfits
-# endregion
-
-# 健康檢查端點
-@app.get("/health", response_model=model.MessageResponse)
-async def health_check():
-    return {"message": "健康狀態良好", "service": "wearther-api"}
+    from routes.user_routes import user_bp
+    from routes.outfit_routes import outfit_bp
+    from routes.post_routes import post_bp
+    from routes.clothing_routes import clothing_bp
+    from routes.cwa_routes import cwa_bp
+    
+    app.register_blueprint(user_bp, url_prefix='/api/users')
+    app.register_blueprint(outfit_bp, url_prefix='/api/outfits')
+    app.register_blueprint(post_bp, url_prefix='/api/posts')
+    app.register_blueprint(clothing_bp, url_prefix='/api/clothing')
+    app.register_blueprint(cwa_bp, url_prefix='/api/weather')
+    
+    return app
