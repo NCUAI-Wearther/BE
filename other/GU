@@ -1,0 +1,14 @@
+# User-agent: Googlebot
+# Allow: /.well-known/assetlinks.json
+# Allow: /jp/ja/stylingbook/*
+
+User-Agent: *
+Disallow: /jp/ja/search?q=
+# Disallow: /jp/ja/cms
+# Disallow: /jp/ja/products/*/store-inventory
+Disallow: /jp/ja/products/*/size
+Disallow: /tw/zh_TW/search.html?description=
+Disallow: /hk/zh_HK/search.html?description=
+
+User-agent: GPTBot
+Disallow: /

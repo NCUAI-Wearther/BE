@@ -1,20 +1,17 @@
 from flask import Blueprint, current_app, request, jsonify
-from werkzeug.security import generate_password_hash, check_password_hash
-from models import User
-from repositories import UserRepository, FavoriteRepository, LikeRepository
-from schemas import UserSchema, FavoriteSchema, LikeSchema
-import jwt
+
 import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
+import jwt
+
+from repositories import TryOnRepository, UserRepository, FavoriteRepository, PostRepository
+from models import User
+from dto.user_dto import FavoriteViewDTO, PostViewDTO, TryonViewDTO, UserRegisterDTO, UserLoginDTO, UserUpdateDTO, UserViewDTO
 
 user_bp = Blueprint('user_bp', __name__)
-user_schema = UserSchema()
-users_schema = UserSchema(many=True)
-favorite_schema = FavoriteSchema()
-favorites_schema = FavoriteSchema(many=True)
-like_schema = LikeSchema()
-likes_schema = LikeSchema(many=True)
 
+# region user
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -27,7 +24,7 @@ def token_required(f):
         
         try:
             data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
-            current_user = UserRepository.get_by_id(data['user_id'])
+            current_user = UserRepository.get_by_id(data['users_id'])
         except:
             return jsonify({'message': 'Token is invalid!'}), 401
         
@@ -35,117 +32,149 @@ def token_required(f):
     
     return decorated
 
+
 @user_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
+    user_dto = UserRegisterDTO.from_dict(data)
 
-    if UserRepository.get_by_username(data['username']):
-        return jsonify({'message': 'Username already exists!'}), 409
-    
-    if UserRepository.get_by_email(data['email']):
+    if UserRepository.get_by_email(user_dto.email):
         return jsonify({'message': 'Email already exists!'}), 409
 
-    hashed_password = generate_password_hash(data['password'])
+    hashed_password = generate_password_hash(user_dto.password)
     new_user = User(
-        username=data['username'],
-        email=data['email'],
+        username=user_dto.username,
+        email=user_dto.email,
         password_hash=hashed_password,
-        profile_pic_url=data.get('profile_pic_url')
+        gender=user_dto.gender,
+        profile_pic_url=user_dto.profile_pic_url,
+        created_at = datetime.datetime.now()
     )
     
     UserRepository.add(new_user)
-    
+
     return jsonify({'message': 'User created successfully!'}), 201
 
 
 @user_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    
+    user_dto = UserLoginDTO.from_dict(data)
     user = UserRepository.get_by_email(data['email'])
     
-    if not user or not check_password_hash(user.password_hash, data['password']):
+    if not user or not check_password_hash(user.password_hash, user_dto.password):
         return jsonify({'message': 'Invalid credentials!'}), 401
 
     token = jwt.encode({
-        'user_id': user.id,
+        'users_id': user.id,
         'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1)
     }, current_app.config['SECRET_KEY'], algorithm="HS256")
     
     return jsonify({'token': token}), 200
 
 
-@user_bp.route('/', methods=['GET'])
-def get_all_users():
-    users = UserRepository.get_all()
-    return jsonify(users_schema.dump(users)), 200
-
-
-@user_bp.route('/<int:user_id>', methods=['GET'])
-def get_user(user_id):
-    user = UserRepository.get_by_id(user_id)
-    
+@user_bp.route('/<int:users_id>', methods=['GET'])
+def get_user(users_id):
+    user = UserRepository.get_by_id(users_id)
     if not user:
         return jsonify({'message': 'User not found!'}), 404
     
-    return jsonify(user_schema.dump(user)), 200
+    return jsonify(UserViewDTO.from_model(user)), 200
 
 
-@user_bp.route('/<int:user_id>', methods=['PUT'])
-def update_user(user_id):
-    user = UserRepository.get_by_id(user_id)
-    
-    if not user:
-        return jsonify({'message': 'User not found!'}), 404
-    
+@user_bp.route('/<int:users_id>', methods=['PUT'])
+def update_user(users_id):
     data = request.get_json()
- 
-    if 'username' in data:
-        existing_user = UserRepository.get_by_username(data['username'])
-        if existing_user and existing_user.id != user_id:
-            return jsonify({'message': 'Username already exists!'}), 409
-        user.username = data['username']
+    user_dto = UserUpdateDTO.from_dict(data)
+    user = UserRepository.get_by_id(users_id)
+
+    if not user:
+        return jsonify({'message': 'User not found!'}), 404
+
+    if user_dto.username != None:
+        user.username = user_dto.username
     
-    if 'email' in data:
-        existing_user = UserRepository.get_by_email(data['email'])
-        if existing_user and existing_user.id != user_id:
-            return jsonify({'message': 'Email already exists!'}), 409
-        user.email = data['email']
+    if user_dto.email != None:
+        user.email = user_dto.email
     
-    if 'password' in data:
-        user.password_hash = generate_password_hash(data['password'])
-    
-    if 'profile_pic_url' in data:
-        user.profile_pic_url = data['profile_pic_url']
-    
-    UserRepository.update()
-    
+    if user_dto.password != None:
+        user.password_hash = generate_password_hash(user_dto.password)
+
+    if user_dto.gender != None:
+        user.gender = user_dto.gender
+
+    if user_dto.birthday != None:
+        user.birthday = user_dto.birthday
+
+    if user_dto.profile_pic_url != None:
+        user.profile_pic_url = user_dto.profile_pic_url
+
+    UserRepository.update(user)
+
     return jsonify({'message': 'User updated successfully!'}), 200
 
+@user_bp.route('/upload_photo/<int:users_id>', methods=['POST'])
+def upload_photo(users_id):
+    data = request.get_json()
+    imgFile = data['imgFile']
 
-@user_bp.route('/<int:user_id>', methods=['DELETE'])
-def delete_user(user_id):
-    user = UserRepository.get_by_id(user_id)
-    
+    if not imgFile:
+        return jsonify({'message': 'imgFile cannot be null!'}), 404
+
+    user = UserRepository.get_by_id(users_id)
     if not user:
         return jsonify({'message': 'User not found!'}), 404
     
-    UserRepository.delete(user)
+    # user.photo_pic_url = #todo
+    url=imgFile
+    user.photo_pic_url= url
+
+    UserRepository.update(user)
+    return jsonify({'message': 'User photo upload successfully!', 'photo_pic_url': url}), 200
+# endregion
+
+
+# region favorite
+@user_bp.route('/favorites/<int:users_id>', methods=['GET'])
+def get_favorites(users_id):
+    favorites = FavoriteRepository.get_by_users_id(users_id)
+    if not favorites:
+        return jsonify({'message': 'favorite not found!', 'favorites': []}), 404
+
+    response = []
+    for favorite in favorites:
+        response.append(FavoriteViewDTO.from_model(favorite))
+
+    return jsonify({'favorite':response}), 200
+
+# endregion
+
+
+# region post
+@user_bp.route('/posts/<int:users_id>', methods=['GET'])
+def get_posts(users_id):
+    posts = PostRepository.get_by_users_id(users_id)
+    if not posts:
+        return jsonify({'message': 'post not found!', 'posts': []}), 404
     
-    return jsonify({'message': 'User deleted successfully!'}), 200
-
-
-@user_bp.route('/<int:user_id>/favorites', methods=['GET'])
-def get_user_favorites(current_user, user_id):
-
-    favorites = FavoriteRepository.get_by_user(user_id)
+    response = []
+    for post in posts:
+        response.append(PostViewDTO.from_model(post))
     
-    return jsonify(favorites_schema.dump(favorites)), 200
+    return jsonify({'posts':response}), 200
+# endregion
 
 
-@user_bp.route('/<int:user_id>/likes', methods=['GET'])
-def get_user_likes(current_user, user_id):
-
-    likes = LikeRepository.get_by_user(user_id)
+# region tryon
+@user_bp.route('/tryons/<int:users_id>', methods=['GET'])
+def get_tryons(users_id):
+    tryOns = TryOnRepository.get_by_users_id(users_id)
+    if not tryOns:
+        return jsonify({'message': 'Tryon not found!', 'tryOns': []}), 404
     
-    return jsonify(likes_schema.dump(likes)), 200
+    response = []
+    for tryOn in tryOns:
+        response.append(TryonViewDTO.from_model(tryOn))
+    
+    return jsonify({'tryOns':response}), 200
+# endregion

@@ -3,12 +3,12 @@ import requests
 from routes.user_routes import token_required
 from config import Config
 
-cwa_bp = Blueprint('cwa_bp', __name__)
+weather_bp = Blueprint('weather_bp', __name__)
 CWA_API_URL = Config.CWA_API_URL
 CWA_API_KEY = Config.CWA_API_KEY
 
 # 以經緯度查詢行政區與鄉鎮天氣預報資料
-@cwa_bp.route('/forecast', methods=['GET'])
+@weather_bp.route('/forecast', methods=['GET'])
 def get_forecast():
     try:
         longitude = request.args.get('longitude')
@@ -194,7 +194,7 @@ def get_forecast():
         }), 500
 
 # 以經緯度查詢空氣品質指標與氣象觀測資料
-@cwa_bp.route('/current', methods=['GET'])
+@weather_bp.route('/current', methods=['GET'])
 def get_current_weather():
     try:
         longitude = request.args.get('longitude')
