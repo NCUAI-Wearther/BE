@@ -124,10 +124,10 @@ def get_current_weather():
         cwa_response = requests.post(CWA_API_URL, json={"query": query}, headers=headers)
         
         # 檢查 API 回應
-        if response.status_code != 200 or 'errors' in response.json():
+        if cwa_response.status_code != 200 or 'errors' in cwa_response.json():
             return jsonify({
                 'success': False,
-                'message': f'External API error: {response.status_code}, {response.text}'
+                'message': f'External API error: {cwa_response.status_code}, {cwa_response.text}'
             }), 500
 
         data = cwa_response.json()
@@ -148,10 +148,7 @@ def get_current_weather():
           "weather_condition": weather_condition
         }
         
-        return jsonify({
-            'success': True,
-            'data': response
-        }), 200
+        return response
         
     except Exception as e:
         return jsonify({
