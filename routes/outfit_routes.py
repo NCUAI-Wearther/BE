@@ -13,8 +13,8 @@ def create_outfit():
     outfit_dto = OutfitCreateDTO.from_dict(data)
 
     outfit = Outfit(
-        styleTag=outfit_dto.styleTag,
-        occasionTag=outfit_dto.occasionTag,
+        style_tag=outfit_dto.style_tag,
+        occasion_tag=outfit_dto.occasion_tag,
         name=outfit_dto.name,
         weather=outfit_dto.weather,
         season=outfit_dto.season,
@@ -59,4 +59,10 @@ def get_outfit_items(outfits_id):
 
     return jsonify({
         'items': [OutfitItemViewDTO.from_model(item) for item in items]
+    }), 200
+    
+@outfit_bp.route('/rcm/<int:outfits_id>', methods=['GET'])
+def get_rcm_outfit(users_id):
+    return jsonify({
+        'test': "test"
     }), 200

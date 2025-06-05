@@ -5,8 +5,8 @@ from models import Outfit, OutfitItem
 
 @dataclass
 class OutfitCreateDTO:
-    styleTag: str
-    occasionTag: str
+    style_tag: str
+    occasion_tag: str
     name: str
     weather: str
     season:str
@@ -15,8 +15,8 @@ class OutfitCreateDTO:
     @staticmethod
     def from_dict(data: dict) -> "OutfitCreateDTO":
         return OutfitCreateDTO(
-            styleTag=data.get('styleTag'),
-            occasionTag=data.get('occasionTag'),
+            style_tag=data.get('style_tag'),
+            occasion_tag=data.get('occasion_tag'),
             name=data.get('name'),
             weather=data.get('weather'),
             season=data.get('season'),

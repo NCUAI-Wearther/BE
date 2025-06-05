@@ -20,7 +20,6 @@ def create_app(config_class=Config):
     from routes.favorite_routes import favorite_bp
     from routes.like_routes import like_bp
     from routes.clothes_routes import clothes_bp
-    from routes.tryon_routes import tryon_bp
     from routes.weather_routes import weather_bp
     
     app.register_blueprint(user_bp, url_prefix='/api/users')
@@ -29,7 +28,6 @@ def create_app(config_class=Config):
     app.register_blueprint(favorite_bp, url_prefix='/api/favorites')
     app.register_blueprint(like_bp, url_prefix='/api/likes')
     app.register_blueprint(clothes_bp, url_prefix='/api/clothes')
-    app.register_blueprint(tryon_bp, url_prefix='/api/tryons')
     app.register_blueprint(weather_bp, url_prefix='/api/weather')
 
     return app

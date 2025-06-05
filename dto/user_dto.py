@@ -3,16 +3,15 @@ import datetime
 from typing import Optional
 from sqlalchemy import TEXT
 
-from models import Favorite, Post, TryOn, User
+from models import Favorite, Like, Post,User
 
 @dataclass
 class UserRegisterDTO:
     username: str
     email: str
-    birthday: datetime.date
     password: str
     gender: Optional[str] = None
-    profile_pic_url: Optional[str] = None
+    birthday: Optional[datetime.date] = None
 
     @staticmethod
     def from_dict(data: dict) -> "UserRegisterDTO":
@@ -21,8 +20,7 @@ class UserRegisterDTO:
             email=data.get('email'),
             password=data.get('password'),
             gender=data.get('gender'),
-            birthday=data.get('birthday'),
-            profile_pic_url=data.get('profile_pic_url')
+            birthday=data.get('birthday')
         )
 
 @dataclass
@@ -38,48 +36,6 @@ class UserLoginDTO:
         )
 
 @dataclass
-class UserViewDTO:
-    id: int
-    username: str
-    email: str
-    created_at: datetime
-    gender: Optional[str] = None
-    birthday: Optional[datetime.date] = None
-    profile_pic_url: Optional[str] = None
-
-    @staticmethod
-    def from_model(user: User) -> "UserViewDTO":
-        return UserViewDTO(
-            id=user.id,
-            username=user.username,
-            email=user.email,
-            gender=user.gender,
-            birthday=user.birthday,
-            profile_pic_url=user.profile_pic_url,
-            created_at=user.created_at
-        )
-
-@dataclass
-class UserUpdateDTO:
-    username: str
-    email: str
-    password: str
-    birthday: datetime.date
-    gender: Optional[str] = None
-    profile_pic_url: Optional[str] = None
-
-    @staticmethod
-    def from_dict(data: dict) -> "UserUpdateDTO":
-        return UserUpdateDTO(
-            username=data.get('username'),
-            email=data.get('email'),
-            password=data.get('password'),
-            gender=data.get('gender'),
-            birthday=data.get('birthday'),
-            profile_pic_url=data.get('profile_pic_url'),
-        )
-              
-@dataclass
 class FavoriteViewDTO:
     users_id: int
     outfits_id: int
@@ -91,6 +47,20 @@ class FavoriteViewDTO:
             users_id=favorite.users_id,
             outfits_id=favorite.outfits_id,
             created_at=favorite.created_at
+        )
+
+@dataclass
+class LikeViewDTO:
+    users_id: int
+    outfits_id: int
+    created_at: datetime
+
+    @staticmethod
+    def from_model(like: Like) -> "LikeViewDTO":
+        return LikeViewDTO(
+            users_id=like.users_id,
+            outfits_id=like.outfits_id,
+            created_at=like.created_at
         )
         
 @dataclass
@@ -109,18 +79,4 @@ class PostViewDTO:
             users_id=post.users_id,
             outfits_id=post.outfits_id,
             created_at=post.created_at
-        )
-
-@dataclass
-class TryonViewDTO:
-    users_id: int
-    clothes_id: int
-    category: str
-
-    @staticmethod
-    def from_dict(data: dict) -> "TryonViewDTO":
-        return TryonViewDTO(
-            users_id=data.get('users_id'),
-            clothes_id=data.get('clothes_id'),
-            category=data.get('category'),
         )

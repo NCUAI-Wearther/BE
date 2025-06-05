@@ -17,7 +17,7 @@ def add_favorite():
         outfits_id=favorite_dto.outfits_id,
         created_at=datetime.datetime.now()
     )
-    
+
     FavoriteRepository.add(favorite)
 
     return jsonify({'message': 'Favorite add successfully!'}), 201

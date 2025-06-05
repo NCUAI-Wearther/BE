@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, Date, DateTime, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, DateTime, Text, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 
 db = SQLAlchemy()
@@ -13,24 +13,21 @@ class User(db.Model):
     password_hash = Column(String(255), nullable=False)
     gender = Column(String(5))
     birthday = Column(Date)
-    profile_pic_url = Column(String(200))
-    photo_pic_url = Column(String(200))
     created_at = Column(DateTime, nullable=False)
 
     posts = relationship("Post", back_populates="user")
     favorites = relationship("Favorite", back_populates="user")
-    tryons = relationship("TryOn", back_populates="user")
     likes = relationship("Like", back_populates="user")
+    user_preferences = relationship("UserPreference", back_populates="user")
 
 class Outfit(db.Model):
     __tablename__ = 'outfits'
 
     id = Column(Integer, primary_key=True)
-    styleTag = Column(String(30), nullable=False)
-    occasionTag = Column(String(30), nullable=False)
-    name = Column(String(200), nullable=False)
-    weather = Column(String(30), nullable=False)
-    season = Column(String(10), nullable=False)
+    isRain = Column(Boolean, nullable=False, default=False)
+    weather_condition = Column(String(20), nullable=False)
+    style_tag = Column(String(30), nullable=False, default='無')
+    occasion_tag = Column(String(30), nullable=False, default='無')
     image_url = Column(String(200))
     created_at = Column(DateTime, nullable=False)
 
@@ -90,24 +87,11 @@ class Cloth(db.Model):
     brand = Column(String(45), nullable=False)
     category = Column(String(30), nullable=False)
     name = Column(String(200), nullable=False)
-    color = Column(String(10))
     product_pic_url = Column(String(255), nullable=False)
-    model_pic_url = Column(String(255))
     link_url = Column(String(200), nullable=False)
     price = Column(Integer, nullable=False)
 
-    tryons = relationship("TryOn", back_populates="cloth")
     related = relationship("Related", back_populates="cloth")
-
-class TryOn(db.Model):
-    __tablename__ = 'tryons'
-
-    users_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    clothes_id = Column(Integer, ForeignKey('clothes.id'), primary_key=True)
-    category = Column(String(30), nullable=False)
-
-    user = relationship("User", back_populates="tryons")
-    cloth = relationship("Cloth", back_populates="tryons")
 
 class Related(db.Model):
     __tablename__ = 'related'
@@ -117,3 +101,15 @@ class Related(db.Model):
 
     cloth = relationship("Cloth", back_populates="related")
     outfit = relationship("Outfit", back_populates="related")
+
+class UserPreference(db.Model):
+    __tablename__ = 'user_preferences'
+
+    id = Column(Integer, primary_key=True)
+    users_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    style_tag = Column(String(30), nullable=False, default='無')
+    occasion_tag = Column(String(30), nullable=False, default='無')
+    preference_score = Column(Integer, nullable=False, default=1)
+    created_at = Column(DateTime, nullable=False)
+
+    user = relationship("User", back_populates="user_preferences")

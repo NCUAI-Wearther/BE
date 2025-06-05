@@ -7,8 +7,8 @@ from dto.clothes_dto import ClotheViewDTO
 
 clothes_bp = Blueprint('clothes_bp', __name__)
 
-@clothes_bp.route('/', methods=['GET'])
-def getAll_clothes():
+@clothes_bp.route('/<int:users_id>', methods=['GET'])
+def getAll_clothes(users_id):
     clothes = ClothRepository.getAll()
     
     if not clothes:

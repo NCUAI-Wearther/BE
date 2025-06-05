@@ -12,12 +12,10 @@ def add_like():
     data = request.get_json()
     like_dto = LikeAddDTO.from_dict(data)
 
-    # if FavoriteRepository.get_by_user_and_outfits_id(favorite_dto.users_id):
-
     like = Like(
         users_id=like_dto.users_id,
         posts_id=like_dto.posts_id,
-        created_at=datetime.datetime.now
+        created_at=datetime.datetime.now()
     )
     
     LikeRepository.add(like)

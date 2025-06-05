@@ -2,10 +2,8 @@ import os
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard-to-guess-string'
-    # SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL',
-    #     'mysql+pymysql://myAdmin:Wearther04@wearther-db.mysql.database.azure.com/wearther?ssl_ca=../etc/ssl/ca-cert.pem')
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL',
-        'mysql+pymysql://myAdmin:Wearther04@localhost:3306/wearther')
+        'mysql+pymysql://root:1234@localhost:3306/wearther')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     CWA_API_URL = os.environ.get('CWA_API_URL', 'https://opendata.cwa.gov.tw/linked/graphql')
