@@ -6,6 +6,7 @@ Thumbs.db
 *.log
 
 # Dependency directories
-node_modules/
 venv/
 .env
+
+develop.md
