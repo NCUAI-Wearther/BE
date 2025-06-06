@@ -2,13 +2,20 @@ Flask==2.2.3
 Flask-Cors==3.0.10
 
 PyMySQL==1.0.3
-SQLAlchemy
+SQLAlchemy==1.4.46
 Flask-SQLAlchemy==3.0.3
 
 requests==2.31.0
 
-#user security
+# User Security
 PyJWT==2.6.0
 Werkzeug==2.2.3
 
-# python-dotenv
+# Image Generation and Upload
+cloudinary==1.37.0
+
+# Google Vertex AI Platform
+google-cloud-aiplatform==1.44.0
+
+# For .env config support
+python-dotenv==1.0.1

@@ -21,6 +21,7 @@ def create_app(config_class=Config):
     from routes.like_routes import like_bp
     from routes.clothes_routes import clothes_bp
     from routes.weather_routes import weather_bp
+    from routes.generate_routes import generate_bp
     
     @app.route('/')
     def index():
@@ -33,5 +34,6 @@ def create_app(config_class=Config):
     app.register_blueprint(like_bp, url_prefix='/api/likes')
     app.register_blueprint(clothes_bp, url_prefix='/api/clothes')
     app.register_blueprint(weather_bp, url_prefix='/api/weather')
+    app.register_blueprint(generate_bp, url_prefix='/api/generate')
 
     return app
