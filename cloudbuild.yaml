@@ -20,8 +20,51 @@ steps:
         '--image', 'gcr.io/$PROJECT_ID/wearther',
         '--region', 'asia-east1',
         '--platform', 'managed',
+        '--service-account', 'wearther@amazing-pipe-462112-h2.iam.gserviceaccount.com',
         '--allow-unauthenticated'
       ]
 
 images:
   - 'gcr.io/$PROJECT_ID/wearther'
+
+# options:
+#   logging: CLOUD_LOGGING_ONLY
+# steps:
+#   # 步驟 1: 建構 Docker 映像
+#   - name: 'gcr.io/cloud-builders/docker'
+#     args: [
+#       'build',
+#       '-t',
+#       'gcr.io/$PROJECT_ID/db-frontend:$COMMIT_SHA',
+#       '.'
+#     ]
+
+#   # 步驟 2: 推送映像到 Container Registry
+#   - name: 'gcr.io/cloud-builders/docker'
+#     args: ['push', 'gcr.io/$PROJECT_ID/db-frontend:$COMMIT_SHA']
+
+#   # 步驟 3: 部署到 Cloud Run
+#   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+#     entrypoint: 'gcloud'  # 添加這行
+#     args:
+#       - 'run'
+#       - 'deploy'
+#       - 'db-frontend'
+#       - '--image'
+#       - 'gcr.io/$PROJECT_ID/db-frontend:$COMMIT_SHA'
+#       - '--region'
+#       - 'asia-east1'
+#       - '--platform'
+#       - 'managed'
+#       - '--port'
+#       - '4200'
+#       - '--vpc-connector'
+#       - 'ncuim-connector'
+#       - '--ingress'
+#       - 'internal'
+#       - '--vpc-egress'
+#       - 'all-traffic'
+#       - '--allow-unauthenticated'
+
+# images:
+#   - 'gcr.io/$PROJECT_ID/db-frontend:$COMMIT_SHA'
