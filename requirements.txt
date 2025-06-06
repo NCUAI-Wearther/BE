@@ -1,19 +1,14 @@
 Flask==2.2.3
-Flask-SQLAlchemy==3.0.3
-Flask-Marshmallow==0.14.0
-marshmallow==3.0.0
-marshmallow-sqlalchemy==0.29.0
 Flask-Cors==3.0.10
-PyJWT==2.6.0
+
 PyMySQL==1.0.3
-cryptography==39.0.0
-Werkzeug==2.2.3
-python-dotenv==1.0.0
-requests==2.31.0
-Pillow
-numpy
-
-
-beautifulsoup4
 SQLAlchemy
-APScheduler
+Flask-SQLAlchemy==3.0.3
+
+requests==2.31.0
+
+#user security
+PyJWT==2.6.0
+Werkzeug==2.2.3
+
+# python-dotenv
