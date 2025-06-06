@@ -1,3 +1,7 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
+
 steps:
   # 步驟 1: 建立 Docker 映像
   - name: 'gcr.io/cloud-builders/docker'
