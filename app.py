@@ -22,6 +22,10 @@ def create_app(config_class=Config):
     from routes.clothes_routes import clothes_bp
     from routes.weather_routes import weather_bp
     
+    @app.route('/')
+    def index():
+        return 'Cloud Run Flask API is healthy.'
+    
     app.register_blueprint(user_bp, url_prefix='/api/users')
     app.register_blueprint(outfit_bp, url_prefix='/api/outfits')
     app.register_blueprint(post_bp, url_prefix='/api/posts')
