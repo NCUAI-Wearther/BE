@@ -52,14 +52,14 @@ class FavoriteViewDTO:
 @dataclass
 class LikeViewDTO:
     users_id: int
-    outfits_id: int
+    posts_id: int
     created_at: datetime
 
     @staticmethod
     def from_model(like: Like) -> "LikeViewDTO":
         return LikeViewDTO(
             users_id=like.users_id,
-            outfits_id=like.outfits_id,
+            posts_id=like.posts_id,
             created_at=like.created_at
         )
         
@@ -78,5 +78,7 @@ class PostViewDTO:
             id=post.id,
             users_id=post.users_id,
             outfits_id=post.outfits_id,
+            content=post.content,
+            media_url=post.media_url,
             created_at=post.created_at
         )

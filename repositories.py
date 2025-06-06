@@ -40,7 +40,7 @@ class OutfitRepository(BaseRepository):
     def get_by_id(outfit_id):
         return Outfit.query.get(outfit_id)
 
-class PostRepository:
+class PostRepository(BaseRepository):
     @staticmethod
     def get_by_users_id(users_id):
         from models import Post
@@ -66,12 +66,16 @@ class FavoriteRepository(BaseRepository):
         return False
 
 class LikeRepository(BaseRepository):
+    def get_by_users_id(users_id):
+        from models import Like
+        return Like.query.filter_by(users_id=users_id).all()
+    
     @staticmethod
     def get_by_posts_id(post_id):
         return Like.query.filter_by(posts_id=post_id).all()
 
 
-class OutfitItemRepository:
+class OutfitItemRepository(BaseRepository):
     @staticmethod
     def get_by_outfits_id(outfits_id):
         from models import OutfitItem

@@ -13,17 +13,16 @@ def create_outfit():
     outfit_dto = OutfitCreateDTO.from_dict(data)
 
     outfit = Outfit(
+        isRain=outfit_dto.isRain,
+        weather_condition=outfit_dto.weather_condition,
         style_tag=outfit_dto.style_tag,
         occasion_tag=outfit_dto.occasion_tag,
-        name=outfit_dto.name,
-        weather=outfit_dto.weather,
-        season=outfit_dto.season,
         created_at=datetime.datetime.now()
     )
-    
-    OutfitRepository.add(outfit)
 
-    return jsonify({'message': 'Favorite add successfully!'}), 201
+    newOutfits = OutfitRepository.add(outfit)
+
+    return jsonify({'message': 'Favorite add successfully!','outfits_id':newOutfits.id} ), 201
 
 @outfit_bp.route('/outfit_items', methods=['POST'])
 def create_outfit_items():
@@ -61,7 +60,7 @@ def get_outfit_items(outfits_id):
         'items': [OutfitItemViewDTO.from_model(item) for item in items]
     }), 200
     
-@outfit_bp.route('/rcm/<int:outfits_id>', methods=['GET'])
+@outfit_bp.route('/rcm/<int:users_id>', methods=['GET'])
 def get_rcm_outfit(users_id):
     return jsonify({
         'test': "test"

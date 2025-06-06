@@ -36,6 +36,8 @@ class PostViewDTO:
             id=post.id,
             users_id=post.users_id,
             outfits_id=post.outfits_id,
+            content=post.content,
+            media_url=post.media_url,
             created_at=post.created_at
         )
 

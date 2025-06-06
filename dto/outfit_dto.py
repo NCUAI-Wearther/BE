@@ -5,21 +5,19 @@ from models import Outfit, OutfitItem
 
 @dataclass
 class OutfitCreateDTO:
+    isRain: str
+    weather_condition:str
     style_tag: str
     occasion_tag: str
-    name: str
-    weather: str
-    season:str
     img_url: Optional[str] = None
-    
+
     @staticmethod
     def from_dict(data: dict) -> "OutfitCreateDTO":
         return OutfitCreateDTO(
+            isRain=data.get('isRain'),
+            weather_condition=data.get('weather_condition'),
             style_tag=data.get('style_tag'),
             occasion_tag=data.get('occasion_tag'),
-            name=data.get('name'),
-            weather=data.get('weather'),
-            season=data.get('season'),
             img_url=data.get('img_url'),
         )
 

@@ -17,7 +17,7 @@ def create_post():
         outfits_id=post.outfits_id,
         content=post.content,
         media_url=post.media_url,
-        created_at = datetime.datetime.now
+        created_at = datetime.datetime.now()
     )
 
     PostRepository.add(new_Post)
