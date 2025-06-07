@@ -19,3 +19,6 @@ google-cloud-aiplatform==1.44.0
 
 # For .env config support
 python-dotenv==1.0.1
+
+scikit-learn
+ckip-transformers
