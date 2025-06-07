@@ -22,6 +22,7 @@ def create_app(config_class=Config):
     from routes.clothes_routes import clothes_bp
     from routes.weather_routes import weather_bp
     from routes.generate_routes import generate_bp
+    from routes.vton_routes import vton_bp
     
     @app.route('/')
     def index():
@@ -35,5 +36,6 @@ def create_app(config_class=Config):
     app.register_blueprint(clothes_bp, url_prefix='/api/clothes')
     app.register_blueprint(weather_bp, url_prefix='/api/weather')
     app.register_blueprint(generate_bp, url_prefix='/api/generate')
+    app.register_blueprint(vton_bp, url_prefix='/api/vton')
 
     return app

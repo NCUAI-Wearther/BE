@@ -42,7 +42,10 @@ def generate_image():
             images[0].save(location=temp_file.name, include_generation_parameters=False)
             temp_file_path = temp_file.name
 
-        upload_result = cloudinary.uploader.upload(temp_file_path)
+        upload_result = cloudinary.uploader.upload(temp_file_path,
+            folder="generate_results",
+            overwrite=True)
+
         image_url = upload_result.get("secure_url")
 
         os.remove(temp_file_path)
