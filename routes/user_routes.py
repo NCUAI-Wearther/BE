@@ -1,11 +1,12 @@
+from collections import Counter
 from flask import Blueprint, current_app, request, jsonify
 
 import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 
-from repositories import  LikeRepository, UserRepository, FavoriteRepository, PostRepository
-from models import User
+from repositories import  LikeRepository, OutfitRepository, UserRepository, FavoriteRepository, PostRepository
+from models import db, User
 from dto.user_dto import FavoriteViewDTO, LikeViewDTO, PostViewDTO, UserRegisterDTO, UserLoginDTO
 
 user_bp = Blueprint('user_bp', __name__)
@@ -34,6 +35,7 @@ def register():
     UserRepository.add(new_user)
 
     return jsonify({'message': 'User created successfully!'}), 201
+# endregion
 
 
 @user_bp.route('/login', methods=['POST'])
@@ -50,7 +52,7 @@ def login():
         'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1)
     }, current_app.config['SECRET_KEY'], algorithm="HS256")
     
-    return jsonify({'token': token}), 200
+    return jsonify({'users_id': user.id}), 200
 
 # endregion
 

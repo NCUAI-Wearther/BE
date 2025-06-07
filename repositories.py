@@ -1,4 +1,4 @@
-from models import User, Outfit, Post, Favorite, Like, OutfitItem, Cloth, Related
+from models import User, Outfit, Post, Favorite, Like, OutfitItem
 
 class BaseRepository:
     @staticmethod
@@ -80,18 +80,3 @@ class OutfitItemRepository(BaseRepository):
     def get_by_outfits_id(outfits_id):
         from models import OutfitItem
         return OutfitItem.query.filter_by(outfits_id=outfits_id).all()
-
-class ClothRepository(BaseRepository):
-    @staticmethod
-    def get_by_id(cloth_id):
-        return Cloth.query.get(cloth_id)
-
-
-class RelatedRepository(BaseRepository):
-    @staticmethod
-    def get_clothes_by_outfit_id(outfit_id):
-        return Related.query.filter_by(outfits_id=outfit_id).all()
-
-    @staticmethod
-    def get_outfits_by_cloth_id(cloth_id):
-        return Related.query.filter_by(clothes_id=cloth_id).all()

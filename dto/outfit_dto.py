@@ -9,7 +9,7 @@ class OutfitCreateDTO:
     weather_condition:str
     style_tag: str
     occasion_tag: str
-    img_url: Optional[str] = None
+    image_url: Optional[str] = None
 
     @staticmethod
     def from_dict(data: dict) -> "OutfitCreateDTO":
@@ -18,9 +18,29 @@ class OutfitCreateDTO:
             weather_condition=data.get('weather_condition'),
             style_tag=data.get('style_tag'),
             occasion_tag=data.get('occasion_tag'),
-            img_url=data.get('img_url'),
+            image_url=data.get('image_url'),
         )
 
+@dataclass
+class OutfitViewDTO:
+    id: int
+    isRain: str
+    weather_condition:str
+    style_tag: str
+    occasion_tag: str
+    image_url: Optional[str] = None
+
+    @staticmethod
+    def from_model(outfit: Outfit) -> "OutfitViewDTO":
+        return OutfitViewDTO(
+            id=outfit.id,
+            isRain=outfit.isRain,
+            weather_condition=outfit.weather_condition,
+            style_tag=outfit.style_tag,
+            occasion_tag=outfit.occasion_tag,
+            image_url=outfit.image_url,
+        )
+        
 @dataclass
 class OutfitItemViewDTO:
     id: int

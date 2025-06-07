@@ -28,7 +28,8 @@ def generate_image():
 
         if not prompt:
             return jsonify({"error": "Missing 'prompt' in request body"}), 400
-
+        
+        prompt="Ghibli-style,anime illustration, full body portrait, front view, a young woman standing, wearing: "+prompt+", clean white background, detailed clothing folds, Studio Ghibli aesthetic"
         generation_model = ImageGenerationModel.from_pretrained("imagen-3.0-fast-generate-001")
 
         images = generation_model.generate_images(
