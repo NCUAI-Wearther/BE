@@ -134,6 +134,8 @@ def get_current_weather():
         aqi_data = data.get('data', {}).get('aqi', {})
         weather = aqi_data[0]['station']['WeatherElement']
         
+        location =f"{aqi_data[0]['town']['ctyName']} {aqi_data[0]['town']['townName']}"
+        station = f"{aqi_data[0]['county']} {aqi_data[0]['sitename']}"
         max_temp = weather['DailyExtreme']['DailyHigh']['TemperatureInfo']['AirTemperature']
         min_temp = weather['DailyExtreme']['DailyLow']['TemperatureInfo']['AirTemperature']
         current_temp = weather['AirTemperature']
@@ -141,6 +143,8 @@ def get_current_weather():
         weather_condition = weather['Weather']
 
         response = {
+          "location": location,
+          "station":station,
           "max_temp": float(max_temp),
           "min_temp": float(min_temp),
           "current_temp": float(current_temp),
