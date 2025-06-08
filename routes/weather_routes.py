@@ -94,9 +94,9 @@ def get_current_weather():
         current_temp = weather['AirTemperature']
         humidity = weather['RelativeHumidity']
         weather_condition = weather['Weather']
-        
-        probability =aqi_data[0]['town']['forecast72hr']['ProbabilityOfPrecipitation']['Time'][0]['ProbabilityOfPrecipitation']
-        
+
+        probabilities = aqi_data[0]['town']['forecast72hr']['ProbabilityOfPrecipitation']['Time']
+        probability = max(probabilities[0]['ProbabilityOfPrecipitation'],probabilities[1]['ProbabilityOfPrecipitation'])
         response = {
           "ctyName": ctyName,
           "townName":townName,
