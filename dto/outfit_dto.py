@@ -10,6 +10,7 @@ class OutfitCreateDTO:
     style_tag: str
     occasion_tag: str
     image_url: Optional[str] = None
+    description: Optional[str] = None
 
     @staticmethod
     def from_dict(data: dict) -> "OutfitCreateDTO":
@@ -19,6 +20,7 @@ class OutfitCreateDTO:
             style_tag=data.get('style_tag'),
             occasion_tag=data.get('occasion_tag'),
             image_url=data.get('image_url'),
+            description=data.get('description'),
         )
 
 @dataclass
@@ -29,6 +31,7 @@ class OutfitViewDTO:
     style_tag: str
     occasion_tag: str
     image_url: Optional[str] = None
+    description: Optional[str] = None
 
     @staticmethod
     def from_model(outfit: Outfit) -> "OutfitViewDTO":
@@ -39,6 +42,7 @@ class OutfitViewDTO:
             style_tag=outfit.style_tag,
             occasion_tag=outfit.occasion_tag,
             image_url=outfit.image_url,
+            description = outfit.description,
         )
         
 @dataclass

@@ -29,6 +29,7 @@ class Outfit(db.Model):
     occasion_tag = Column(String(30), nullable=False, default='無')
     image_url = Column(String(200))
     created_at = Column(DateTime, nullable=False)
+    description = Column(String(45))
 
     posts = relationship("Post", back_populates="outfit")
     favorites = relationship("Favorite", back_populates="outfit")
