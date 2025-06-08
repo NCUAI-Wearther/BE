@@ -87,7 +87,7 @@ def get_current_weather():
         weather = aqi_data[0]['station']['WeatherElement']
         
         ctyName =aqi_data[0]['town']['ctyName']
-        townName =aqi_data[0]['town']['ctyName']
+        townName =aqi_data[0]['town']['townName']
         villageName =aqi_data[0]['town']['villageName']
         max_temp = weather['DailyExtreme']['DailyHigh']['TemperatureInfo']['AirTemperature']
         min_temp = weather['DailyExtreme']['DailyLow']['TemperatureInfo']['AirTemperature']
