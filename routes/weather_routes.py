@@ -30,64 +30,11 @@ def get_current_weather():
           aqi(longitude: {longitude}, latitude: {latitude}) {{
             sitename,
             county,
-            aqi,
-            pollutant,
-            status,
-            so2,
-            co,
-            o3,
-            o3_8hr,
-            pm10,
-            pm2_5,
-            no2,
-            nox,
-            no,
-            wind_speed,
-            wind_direc,
-            publishtime,
-            co_8hr,
-            pm2_5_avg,
-            pm10_avg,
-            so2_avg,
-            longitude,
-            latitude,
-            siteid,
             station {{
-              StationId,
-              StationName,
-              ObsTime {{
-                DateTime
-              }},
-              GeoInfo {{
-                Coordinates {{
-                  CoordinateName,
-                  CoordinateFormat,
-                  StationLatitude,
-                  StationLongitude
-                }},
-                StationAltitude,
-                CountyName,
-                TownName,
-                CountyCode,
-                TownCode
-              }},
               WeatherElement {{
                 Weather,
-                Now {{
-                  Precipitation
-                }},
-                WindDirection,
-                WindSpeed,
                 AirTemperature,
                 RelativeHumidity,
-                AirPressure,
-                GustInfo {{
-                  PeakGustSpeed,
-                  Occurred_At {{
-                    WindDirection,
-                    DateTime
-                  }}
-                }},
                 DailyExtreme {{
                   DailyHigh {{
                     TemperatureInfo {{
@@ -109,21 +56,26 @@ def get_current_weather():
               }}
             }},
             town {{
-              ctyCode,
               ctyName,
-              townCode,
               townName,
-              villageCode,
               villageName
-              #forecast72hr, forecastWeekday...
+              forecast72hr{{
+                  ProbabilityOfPrecipitation{{
+                    ElementName,
+                    Time{{
+                      StartTime,
+                      EndTime
+                      ProbabilityOfPrecipitation
+                    }}
+                  }}
+              }}
             }}
           }}
         }}
         """
-        
+
         cwa_response = requests.post(CWA_API_URL, json={"query": query}, headers=headers)
-        
-        # 檢查 API 回應
+
         if cwa_response.status_code != 200 or 'errors' in cwa_response.json():
             return jsonify({
                 'success': False,
@@ -134,22 +86,27 @@ def get_current_weather():
         aqi_data = data.get('data', {}).get('aqi', {})
         weather = aqi_data[0]['station']['WeatherElement']
         
-        location =f"{aqi_data[0]['town']['ctyName']} {aqi_data[0]['town']['townName']}"
-        station = f"{aqi_data[0]['county']} {aqi_data[0]['sitename']}"
+        ctyName =aqi_data[0]['town']['ctyName']
+        townName =aqi_data[0]['town']['ctyName']
+        villageName =aqi_data[0]['town']['villageName']
         max_temp = weather['DailyExtreme']['DailyHigh']['TemperatureInfo']['AirTemperature']
         min_temp = weather['DailyExtreme']['DailyLow']['TemperatureInfo']['AirTemperature']
         current_temp = weather['AirTemperature']
         humidity = weather['RelativeHumidity']
         weather_condition = weather['Weather']
-
+        
+        probability =aqi_data[0]['town']['forecast72hr']['ProbabilityOfPrecipitation']['Time'][0]['ProbabilityOfPrecipitation']
+        
         response = {
-          "location": location,
-          "station":station,
+          "ctyName": ctyName,
+          "townName":townName,
+          "villageName":villageName,
           "max_temp": float(max_temp),
           "min_temp": float(min_temp),
           "current_temp": float(current_temp),
           "humidity": float(humidity),
-          "weather_condition": weather_condition
+          "weather_condition": weather_condition,
+          "probability":probability
         }
         
         return response
