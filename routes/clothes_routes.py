@@ -51,14 +51,14 @@ def get_all_clothes(users_id):
     item_tokens_list = ws_driver(item_names)
     item_token_sets = [set(tokens) for tokens in item_tokens_list]
 
-    def get_score(cloth):
+    def get_score(cloth, item_token_sets):
         cloth_tokens = set(ws_driver([cloth['name']])[0])
-        max_overlap = max(
-            (len(cloth_tokens & item_tokens) for item_tokens in item_token_sets),
-            default=0
-        )
+        max_overlap = 0
+        for item_tokens in item_token_sets:
+            overlap = len(cloth_tokens & item_tokens)
+            max_overlap = max(max_overlap, overlap)
         return max_overlap
 
-    clothes.sort(key=lambda c: get_score(c), reverse=True)
+    clothes.sort(key=lambda c: get_score(c, item_token_sets), reverse=True)
 
     return jsonify({'clothes': [ClotheViewDTO.from_dict(c) for c in clothes]}), 200
