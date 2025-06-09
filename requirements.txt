@@ -25,4 +25,4 @@ ckip-transformers
 
 rembg
 onnxruntime
-opencv-python
+opencv-python-headless
