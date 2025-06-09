@@ -22,3 +22,7 @@ python-dotenv==1.0.1
 
 scikit-learn
 ckip-transformers
+
+rembg
+onnxruntime
+opencv-python
