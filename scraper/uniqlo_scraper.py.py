@@ -14,7 +14,7 @@ service = Service(chromedriver_path)
 driver = webdriver.Chrome(service=service)
 
 base_url = 'https://www.uniqlo.com/tw/zh_TW/c/'
-genders = ['all_women-', 'all_men-']
+genders = ['women', 'men']
 
 categories = [
     ['Top','tops'],
@@ -100,7 +100,7 @@ def get_detail_page_last_img_url(driver_instance, main_handle_instance, link_url
 print("--- 開始第一階段：爬取商品基礎資訊 ---")
 for gender in genders:
     for category in categories:
-        url = f"{base_url}{gender}{category[1]}.html"
+        url = f"{base_url}all_{gender}-{category[1]}.html"
         
         if category[0] == 'Hat':
             url=f"{base_url}all_women-accessories-cap-hat.html"
