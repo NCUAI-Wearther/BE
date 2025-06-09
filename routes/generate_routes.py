@@ -1,9 +1,13 @@
 import os
 import tempfile
+import cv2
 from flask import Blueprint, jsonify, request
 from config import Config
 import vertexai
 from vertexai.preview.vision_models import ImageGenerationModel
+
+from rembg import remove
+
 import cloudinary
 import cloudinary.uploader
 
@@ -43,6 +47,10 @@ def generate_image():
             images[0].save(location=temp_file.name, include_generation_parameters=False)
             temp_file_path = temp_file.name
 
+        input = cv2.imread(temp_file_path)
+        output = remove(input)
+        cv2.imwrite(temp_file_path, output)
+        
         upload_result = cloudinary.uploader.upload(temp_file_path,
             folder="generate_results",
             overwrite=True)
