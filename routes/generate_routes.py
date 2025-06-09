@@ -1,4 +1,5 @@
 import os
+import random
 import tempfile
 import cv2
 from flask import Blueprint, jsonify, request
@@ -23,17 +24,30 @@ cloudinary.config(
     secure=True
 )
 
+gender = ['man','woman']
 
 @generate_bp.route("/", methods=["POST"])
 def generate_image():
     try:
         data = request.get_json()
         prompt = data.get("prompt")
-
+        gender_str = data.get("gender")
+        
         if not prompt:
             return jsonify({"error": "Missing 'prompt' in request body"}), 400
         
-        prompt="Ghibli-style,anime illustration, full body portrait, front view, a young woman standing, wearing: "+prompt+", clean white background, detailed clothing folds, Studio Ghibli aesthetic"
+        if  not gender_str:
+            if random.randint(0, 1):
+                gender_str = gender[0]
+            else:
+                gender_str = gender[1]
+        
+        prompt = (
+            "highly detailed illustration, full body portrait, front view, a young" + gender_str + "standing, " 
+            "wearing: " + prompt + ", "
+            "clear line art, realistic clothing texture, knitted fabric, soft shading, "
+            "white or transparent background, fashion illustration style"
+        )
         generation_model = ImageGenerationModel.from_pretrained("imagen-3.0-fast-generate-001")
 
         images = generation_model.generate_images(
