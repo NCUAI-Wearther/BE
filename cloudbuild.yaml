@@ -5,11 +5,11 @@ options:
 steps:
   # 步驟 1: 建立 Docker 映像
   - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/wearther', '.' ]
+    args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/wearther:latest', '.' ]
 
   # 步驟 2: 推送映像到 GCR
   - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'push', 'gcr.io/$PROJECT_ID/wearther' ]
+    args: [ 'push', 'gcr.io/$PROJECT_ID/wearther:latest' ]
 
   # 步驟 3: 部署到 Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -17,7 +17,7 @@ steps:
     args:
       [
         'run', 'deploy', 'wearther',
-        '--image', 'gcr.io/$PROJECT_ID/wearther',
+        '--image', 'gcr.io/$PROJECT_ID/wearther:latest',
         '--region', 'asia-east1',
         '--platform', 'managed',
         '--service-account', 'wearther@amazing-pipe-462112-h2.iam.gserviceaccount.com',
@@ -25,4 +25,4 @@ steps:
       ]
 
 images:
-  - 'gcr.io/$PROJECT_ID/wearther'
+  - 'gcr.io/$PROJECT_ID/wearther:latest'
